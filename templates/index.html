@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Main Menu</title>
+      <link rel="stylesheet" href='/static/main.css' />
+</head>
+
+<body>
+    <h1>Main Menu</h1>
+    <button onclick="groupIP()">Group logs by IP address</button>
+    <button onclick="groupDate()">Group logs by date</button>
+    <button onclick="getByIp()">Get logs by IP</button>
+
+    <script>
+        function groupIP() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "api/logs/group_by_ip", true);
+            xhr.onload = function() {
+            if (xhr.status === 200) {
+                var response = JSON.parse(xhr.responseText);
+                var table = document.createElement("table");
+                table.innerHTML = "";
+                for (var i in response) {
+                    var row = table.insertRow(-1);
+                    var cell = row.insertCell(0);
+                    cell.innerHTML = response[i].ip_address;
+                    var cell = row.insertCell(1);
+                    cell.innerHTML = response[i].count;
+                }
+                document.body.appendChild(table);
+            } else {
+                // Handle the error.
+            }
+            };
+            xhr.send();
+                }
+
+        function groupDate() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "api/logs/group_by_date", true);
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    var table = document.createElement("table");
+                    table.innerHTML = "";
+                    for (var i in response) {
+                        var row = table.insertRow(-1);
+                        var cell = row.insertCell(0);
+                        cell.innerHTML = response[i].date;
+                        var cell = row.insertCell(1);
+                        cell.innerHTML = response[i].count;
+                    }
+                    document.body.appendChild(table);
+                } else {
+
+                }
+            };
+            xhr.send();
+
+        }
+
+        function getByIp() {
+        var ipAddress = prompt("Enter the IP address:");
+        if (ipAddress) {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "/api/logs/get_by_ip?ip_address=" + ipAddress, true);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    var table = document.createElement("table");
+                    table.innerHTML = "";
+                    for (var i in response) {
+                        var row = table.insertRow(-1);
+                        var cell = row.insertCell(0);
+                        cell.innerHTML = response[i].ip_address;
+                        var cell = row.insertCell(1);
+                        cell.innerHTML = response[i].date;
+                    }
+                    document.body.appendChild(table);
+                } else {
+                    // Handle the error.
+                }
+            };
+            xhr.send();
+        }
+}
+
+$(document).ready(function() {
+    $("#getByIp").click(function() {
+        getByIp();
+    });
+});
+    </script>
+</body>
+</html>
