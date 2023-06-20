@@ -1,4 +1,6 @@
+import asyncio
 import pprint
+import subprocess
 
 import hues
 from flask import Flask, jsonify, request, render_template
@@ -6,6 +8,9 @@ from peewee import fn
 
 import deskui
 import models
+import schedule
+
+import schedulescript
 import settings
 from models import AccessLog, User,create_table
 
@@ -110,12 +115,21 @@ def not_found(error):
 def internal_server_error(error):
     return jsonify({'error': 'Internal server error'}), 500
 
+def powersell_execute():
+    command = f"{settings.power_shell_script_path}"
 
+
+    process = subprocess.Popen(['powershell.exe', '-Command', command], stdout=subprocess.PIPE)
+    result = process.communicate()[0].decode('utf-8')
+
+    # Вывод результата
+    print(result)
 
 if __name__ == '__main__':
     log_file = settings.log_file  # Specify the path to the log file
     create_table()
     models.parse_logs(log_file)
+
 
     while True:
         print('Please select an option:')
@@ -126,6 +140,7 @@ if __name__ == '__main__':
         print('5) Create user')
         print('6) Start GUI')
         print('7) Refresh Access Log')
+        print('8) Add schedule task (windows)')
         print('0) Flask start')
 
         option = input('Enter your choice: ')
@@ -185,6 +200,9 @@ if __name__ == '__main__':
             deskui.run_app()
         elif option == '7':
             models.parse_logs(settings.log_file)
+        elif option == '8':
+            schedulescript.main()
+            powersell_execute()
         elif option == '0':
             app.run()
         else:

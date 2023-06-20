@@ -1,8 +1,6 @@
 import getpass
 import re
 from datetime import datetime
-
-import hues as hues
 from peewee import SqliteDatabase, Model, CharField, DateTimeField, IntegerField
 import psycopg2
 from peewee import CharField, DateField, UUIDField, TimeField, IntegerField
@@ -82,8 +80,8 @@ def parse_logs(log_file):
                                   response_code=response_code,some_int=some_int)
             else:
                 print('err')
-    hues.success("Logs Saved")
-    hues.success('Database initialized and logs parsed.')
+    print(" [SUCCESS] Logs Saved")
+    print(' [SUCCESS] Database initialized and logs parsed.')
 
 
 
